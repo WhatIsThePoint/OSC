@@ -11,6 +11,8 @@ interface VenueInput {
 interface VenueFilters {
   sport?: string;
   maxPrice?: number;
+  openToday?: boolean;
+  openThisWeek?: boolean;
 }
 
 export class VenueService {
@@ -19,10 +21,25 @@ export class VenueService {
   }
 
   static async listVenues(filters: VenueFilters = {}) {
+    const now = new Date();
+    const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+    const endOfWeek = new Date(now);
+    endOfWeek.setDate(now.getDate() + 7);
+
+    // openToday is the tighter window, so it takes precedence when both are set.
+    const slotWindowEnd = filters.openToday ? endOfToday : filters.openThisWeek ? endOfWeek : null;
+
     return prisma.venue.findMany({
       where: {
         ...(filters.sport ? { sportTypes: { has: filters.sport } } : {}),
         ...(filters.maxPrice != null ? { pricePerHour: { lte: filters.maxPrice } } : {}),
+        ...(slotWindowEnd
+          ? {
+              slots: {
+                some: { status: "AVAILABLE", startTime: { gt: now, lt: slotWindowEnd } },
+              },
+            }
+          : {}),
       },
       orderBy: { createdAt: "desc" },
     });

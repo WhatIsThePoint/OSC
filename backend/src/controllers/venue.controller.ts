@@ -12,9 +12,16 @@ const venueSchema = z.object({
   capacity: z.number().int().positive(),
 });
 
+const boolFlag = z
+  .enum(["true", "false"])
+  .transform((v) => v === "true")
+  .optional();
+
 const listQuerySchema = z.object({
   sport: z.string().min(1).optional(),
   maxPrice: z.coerce.number().positive().optional(),
+  openToday: boolFlag,
+  openThisWeek: boolFlag,
 });
 
 export async function createVenue(req: AuthRequest, res: Response) {
