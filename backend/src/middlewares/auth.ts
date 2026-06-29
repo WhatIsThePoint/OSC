@@ -1,8 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { Venue } from "@prisma/client";
 
 export interface AuthRequest extends Request {
   user?: { id: string; email: string; role: string };
+  venue?: Venue;
 }
 
 export function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
