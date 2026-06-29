@@ -7,11 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  PLAYER
-  OWNER
-}
-
 enum SlotStatus {
   AVAILABLE
   HELD
@@ -31,7 +26,6 @@ model User {
   email         String        @unique
   passwordHash  String
   walletBalance Decimal       @default(150) @db.Decimal(12, 2)
-  role          Role          @default(PLAYER)
   createdAt     DateTime      @default(now())
   venues        Venue[]
   heldSlots     TimeSlot[]    @relation("HeldBy")

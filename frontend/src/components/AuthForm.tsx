@@ -6,7 +6,6 @@ export default function AuthForm() {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"PLAYER" | "OWNER">("OWNER");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -15,9 +14,6 @@ export default function AuthForm() {
       <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4">
         <div className="text-sm">
           <span className="font-medium text-gray-900">{user.email}</span>
-          <span className="ml-2 rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-            {user.role}
-          </span>
           <span className="ml-2 text-gray-500">
             Wallet: <span className="font-medium">${Number(user.walletBalance).toFixed(2)}</span>
           </span>
@@ -38,7 +34,7 @@ export default function AuthForm() {
     setBusy(true);
     try {
       if (mode === "login") await login(email, password);
-      else await register(email, password, role);
+      else await register(email, password);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -85,17 +81,6 @@ export default function AuthForm() {
           className="rounded-md border border-gray-300 px-3 py-2 text-sm"
         />
       </div>
-
-      {mode === "register" && (
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value as "PLAYER" | "OWNER")}
-          className="mt-2 rounded-md border border-gray-300 px-3 py-2 text-sm"
-        >
-          <option value="OWNER">OWNER</option>
-          <option value="PLAYER">PLAYER</option>
-        </select>
-      )}
 
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
 

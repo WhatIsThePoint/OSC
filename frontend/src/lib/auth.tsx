@@ -4,7 +4,6 @@ import { api } from "./api";
 export type User = {
   id: string;
   email: string;
-  role: "PLAYER" | "OWNER";
   walletBalance: string | number;
 };
 
@@ -14,7 +13,7 @@ type AuthContextType = {
   user: User | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, role: "PLAYER" | "OWNER") => Promise<void>;
+  register: (email: string, password: string) => Promise<void>;
   logout: () => void;
 };
 
@@ -46,10 +45,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     persist(await api<AuthResponse>("/auth/login", { method: "POST", body: { email, password } }));
   }
 
-  async function register(email: string, password: string, role: "PLAYER" | "OWNER") {
-    persist(
-      await api<AuthResponse>("/auth/register", { method: "POST", body: { email, password, role } })
-    );
+  async function register(email: string, password: string) {
+    persist(await api<AuthResponse>("/auth/register", { method: "POST", body: { email, password } }));
   }
 
   function logout() {
