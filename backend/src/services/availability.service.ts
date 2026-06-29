@@ -33,6 +33,17 @@ export class AvailabilityService {
     });
   }
 
+  static async getSlotsForWeek(venueId: string) {
+    const now = new Date();
+    const weekEnd = new Date(now);
+    weekEnd.setDate(now.getDate() + 7);
+    return prisma.timeSlot.findMany({
+      where: { venueId, startTime: { gte: now, lt: weekEnd } },
+      orderBy: { startTime: "asc" },
+      select: { id: true, startTime: true, endTime: true, status: true },
+    });
+  }
+
   static async generateSlotsForUpcomingWeek(venueId: string, ownerId: string) {
     await assertOwner(venueId, ownerId);
     const rules = await this.getRules(venueId);

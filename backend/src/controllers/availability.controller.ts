@@ -35,6 +35,14 @@ export async function getRules(req: AuthRequest, res: Response) {
   }
 }
 
+export async function getSlots(req: AuthRequest, res: Response) {
+  try {
+    res.json(await AvailabilityService.getSlotsForWeek(req.params.id as string));
+  } catch (e: any) {
+    res.status(e.status || 500).json({ error: e.message || "Server error" });
+  }
+}
+
 export async function generateSlots(req: AuthRequest, res: Response) {
   try {
     res.json(
